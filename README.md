@@ -1,2 +1,2 @@
 # ECM
-Electronic computing machines
+Репозиторий для сдачи лабораторных работ по ЭВМ
