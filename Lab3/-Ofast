@@ -1,0 +1,78 @@
+my_exp(double, long):
+        movapd  xmm3, xmm0
+        test    rdi, rdi
+        jle     .L4
+        movsd   xmm1, QWORD PTR .LC0[rip]
+        add     rdi, 1
+        mov     eax, 1
+        movapd  xmm0, xmm1
+.L3:
+        mulsd   xmm1, xmm3
+        pxor    xmm2, xmm2
+        cvtsi2sd        xmm2, rax
+        add     rax, 1
+        divsd   xmm1, xmm2
+        addsd   xmm0, xmm1
+        cmp     rax, rdi
+        jne     .L3
+        ret
+.L4:
+        movsd   xmm0, QWORD PTR .LC0[rip]
+        ret
+.LC1:
+        .string "my_exp = "
+main:
+        push    rbp
+        mov     edx, 9
+        mov     esi, OFFSET FLAT:.LC1
+        mov     edi, OFFSET FLAT:std::cout
+        push    rbx
+        sub     rsp, 8
+        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)
+        mov     eax, 1
+        mov     edx, 4000000001
+        movsd   xmm1, QWORD PTR .LC0[rip]
+        movapd  xmm0, xmm1
+.L8:
+        pxor    xmm2, xmm2
+        cvtsi2sd        xmm2, rax
+        add     rax, 1
+        divsd   xmm0, xmm2
+        addsd   xmm1, xmm0
+        cmp     rax, rdx
+        jne     .L8
+        movapd  xmm0, xmm1
+        mov     edi, OFFSET FLAT:std::cout
+        call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<double>(double)
+        mov     rbx, rax
+        mov     rax, QWORD PTR [rax]
+        mov     rax, QWORD PTR [rax-24]
+        mov     rbp, QWORD PTR [rbx+240+rax]
+        test    rbp, rbp
+        je      .L13
+        cmp     BYTE PTR [rbp+56], 0
+        je      .L10
+        movsx   esi, BYTE PTR [rbp+67]
+.L11:
+        mov     rdi, rbx
+        call    std::basic_ostream<char, std::char_traits<char> >::put(char)
+        mov     rdi, rax
+        call    std::basic_ostream<char, std::char_traits<char> >::flush()
+        add     rsp, 8
+        xor     eax, eax
+        pop     rbx
+        pop     rbp
+        ret
+.L10:
+        mov     rdi, rbp
+        call    std::ctype<char>::_M_widen_init() const
+        mov     rax, QWORD PTR [rbp+0]
+        mov     esi, 10
+        mov     rdi, rbp
+        call    [QWORD PTR [rax+48]]
+        movsx   esi, al
+        jmp     .L11
+main.cold:
+.LC0:
+        .long   0
+        .long   1072693248
