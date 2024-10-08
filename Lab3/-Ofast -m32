@@ -1,0 +1,93 @@
+my_exp(double, long):
+        sub     esp, 12
+        mov     edx, DWORD PTR [esp+24]
+        movsd   xmm3, QWORD PTR [esp+16]
+        test    edx, edx
+        jle     .L4
+        movsd   xmm0, QWORD PTR .LC0
+        add     edx, 1
+        mov     eax, 1
+        movapd  xmm1, xmm0
+.L3:
+        mulsd   xmm0, xmm3
+        pxor    xmm2, xmm2
+        cvtsi2sd        xmm2, eax
+        add     eax, 1
+        divsd   xmm0, xmm2
+        addsd   xmm1, xmm0
+        cmp     eax, edx
+        jne     .L3
+        movsd   QWORD PTR [esp], xmm1
+        fld     QWORD PTR [esp]
+        add     esp, 12
+        ret
+.L4:
+        movsd   xmm1, QWORD PTR .LC0
+        movsd   QWORD PTR [esp], xmm1
+        fld     QWORD PTR [esp]
+        add     esp, 12
+        ret
+.LC2:
+        .string "my_exp = "
+main:
+        lea     ecx, [esp+4]
+        and     esp, -16
+        push    DWORD PTR [ecx-4]
+        push    ebp
+        mov     ebp, esp
+        push    esi
+        push    ebx
+        push    ecx
+        sub     esp, 16
+        push    9
+        push    OFFSET FLAT:.LC2
+        push    OFFSET FLAT:_ZSt4cout
+        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, int)
+        add     esp, 12
+        push    1072693248
+        push    0
+        push    OFFSET FLAT:_ZSt4cout
+        call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<double>(double)
+        add     esp, 16
+        mov     ebx, eax
+        mov     eax, DWORD PTR [eax]
+        mov     eax, DWORD PTR [eax-12]
+        mov     esi, DWORD PTR [ebx+124+eax]
+        test    esi, esi
+        je      .L12
+        cmp     BYTE PTR [esi+28], 0
+        je      .L10
+        movzx   eax, BYTE PTR [esi+39]
+.L11:
+        sub     esp, 8
+        movsx   eax, al
+        push    eax
+        push    ebx
+        call    std::basic_ostream<char, std::char_traits<char> >::put(char)
+        mov     DWORD PTR [esp], eax
+        call    std::basic_ostream<char, std::char_traits<char> >::flush()
+        add     esp, 16
+        lea     esp, [ebp-12]
+        xor     eax, eax
+        pop     ecx
+        pop     ebx
+        pop     esi
+        pop     ebp
+        lea     esp, [ecx-4]
+        ret
+.L10:
+        sub     esp, 12
+        push    esi
+        call    std::ctype<char>::_M_widen_init() const
+        pop     eax
+        mov     eax, DWORD PTR [esi]
+        pop     edx
+        push    10
+        push    esi
+        call    [DWORD PTR [eax+24]]
+        add     esp, 16
+        jmp     .L11
+main.cold:
+.LC0:
+        .long   0
+        .long   1072693248
