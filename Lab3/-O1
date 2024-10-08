@@ -1,0 +1,42 @@
+my_exp(double, long):
+        movapd  xmm3, xmm0
+        test    rdi, rdi
+        jle     .L4
+        add     rdi, 1
+        mov     eax, 1
+        movsd   xmm1, QWORD PTR .LC0[rip]
+        movapd  xmm0, xmm1
+.L3:
+        mulsd   xmm1, xmm3
+        pxor    xmm2, xmm2
+        cvtsi2sd        xmm2, rax
+        divsd   xmm1, xmm2
+        addsd   xmm0, xmm1
+        add     rax, 1
+        cmp     rax, rdi
+        jne     .L3
+        ret
+.L4:
+        movsd   xmm0, QWORD PTR .LC0[rip]
+        ret
+.LC1:
+        .string "my_exp = "
+main:
+        push    rbx
+        mov     esi, OFFSET FLAT:.LC1
+        mov     edi, OFFSET FLAT:std::cout
+        call    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
+        mov     rbx, rax
+        mov     edi, 4000000000
+        movsd   xmm0, QWORD PTR .LC0[rip]
+        call    my_exp(double, long)
+        mov     rdi, rbx
+        call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<double>(double)
+        mov     rdi, rax
+        call    std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)
+        mov     eax, 0
+        pop     rbx
+        ret
+.LC0:
+        .long   0
+        .long   1072693248
