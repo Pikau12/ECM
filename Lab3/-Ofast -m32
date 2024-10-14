@@ -1,91 +1,84 @@
 my_exp(double, long):
-        sub     esp, 12
-        mov     edx, DWORD PTR [esp+24]
-        movsd   xmm3, QWORD PTR [esp+16]
-        test    edx, edx
+        subl    $12, %esp
+        movl    24(%esp), %edx
+        movsd   16(%esp), %xmm3
+        testl   %edx, %edx
         jle     .L4
-        movsd   xmm0, QWORD PTR .LC0
-        add     edx, 1
-        mov     eax, 1
-        movapd  xmm1, xmm0
+        movsd   .LC0, %xmm0
+        addl    $1, %edx
+        movl    $1, %eax
+        movapd  %xmm0, %xmm1
 .L3:
-        mulsd   xmm0, xmm3
-        pxor    xmm2, xmm2
-        cvtsi2sd        xmm2, eax
-        add     eax, 1
-        divsd   xmm0, xmm2
-        addsd   xmm1, xmm0
-        cmp     eax, edx
+        mulsd   %xmm3, %xmm0
+        pxor    %xmm2, %xmm2
+        cvtsi2sdl       %eax, %xmm2
+        addl    $1, %eax
+        divsd   %xmm2, %xmm0
+        addsd   %xmm0, %xmm1
+        cmpl    %edx, %eax
         jne     .L3
-        movsd   QWORD PTR [esp], xmm1
-        fld     QWORD PTR [esp]
-        add     esp, 12
+        movsd   %xmm1, (%esp)
+        fldl    (%esp)
+        addl    $12, %esp
         ret
 .L4:
-        movsd   xmm1, QWORD PTR .LC0
-        movsd   QWORD PTR [esp], xmm1
-        fld     QWORD PTR [esp]
-        add     esp, 12
+        movsd   .LC0, %xmm1
+        movsd   %xmm1, (%esp)
+        fldl    (%esp)
+        addl    $12, %esp
         ret
-.LC2:
-        .string "my_exp = "
 main:
-        lea     ecx, [esp+4]
-        and     esp, -16
-        push    DWORD PTR [ecx-4]
-        push    ebp
-        mov     ebp, esp
-        push    esi
-        push    ebx
-        push    ecx
-        sub     esp, 16
-        push    9
-        push    OFFSET FLAT:.LC2
-        push    OFFSET FLAT:_ZSt4cout
-        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, int)
-        add     esp, 12
-        push    1072693248
-        push    0
-        push    OFFSET FLAT:_ZSt4cout
+        leal    4(%esp), %ecx
+        andl    $-16, %esp
+        pushl   -4(%ecx)
+        pushl   %ebp
+        movl    %esp, %ebp
+        pushl   %esi
+        pushl   %ebx
+        pushl   %ecx
+        subl    $16, %esp
+        pushl   $1072693248
+        pushl   $0
+        pushl   $_ZSt4cout
         call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<double>(double)
-        add     esp, 16
-        mov     ebx, eax
-        mov     eax, DWORD PTR [eax]
-        mov     eax, DWORD PTR [eax-12]
-        mov     esi, DWORD PTR [ebx+124+eax]
-        test    esi, esi
+        addl    $16, %esp
+        movl    %eax, %ebx
+        movl    (%eax), %eax
+        movl    -12(%eax), %eax
+        movl    124(%ebx,%eax), %esi
+        testl   %esi, %esi
         je      .L12
-        cmp     BYTE PTR [esi+28], 0
+        cmpb    $0, 28(%esi)
         je      .L10
-        movzx   eax, BYTE PTR [esi+39]
+        movzbl  39(%esi), %eax
 .L11:
-        sub     esp, 8
-        movsx   eax, al
-        push    eax
-        push    ebx
+        subl    $8, %esp
+        movsbl  %al, %eax
+        pushl   %eax
+        pushl   %ebx
         call    std::basic_ostream<char, std::char_traits<char> >::put(char)
-        mov     DWORD PTR [esp], eax
+        movl    %eax, (%esp)
         call    std::basic_ostream<char, std::char_traits<char> >::flush()
-        add     esp, 16
-        lea     esp, [ebp-12]
-        xor     eax, eax
-        pop     ecx
-        pop     ebx
-        pop     esi
-        pop     ebp
-        lea     esp, [ecx-4]
+        addl    $16, %esp
+        leal    -12(%ebp), %esp
+        xorl    %eax, %eax
+        popl    %ecx
+        popl    %ebx
+        popl    %esi
+        popl    %ebp
+        leal    -4(%ecx), %esp
         ret
 .L10:
-        sub     esp, 12
-        push    esi
+        subl    $12, %esp
+        pushl   %esi
         call    std::ctype<char>::_M_widen_init() const
-        pop     eax
-        mov     eax, DWORD PTR [esi]
-        pop     edx
-        push    10
-        push    esi
-        call    [DWORD PTR [eax+24]]
-        add     esp, 16
+        popl    %eax
+        movl    (%esi), %eax
+        popl    %edx
+        pushl   $10
+        pushl   %esi
+        call    *24(%eax)
+        addl    $16, %esp
         jmp     .L11
 main.cold:
 .LC0:
