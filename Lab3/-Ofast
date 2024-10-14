@@ -1,76 +1,70 @@
 my_exp(double, long):
-        movapd  xmm3, xmm0
-        test    rdi, rdi
+        movapd  %xmm0, %xmm3
+        testq   %rdi, %rdi
         jle     .L4
-        movsd   xmm1, QWORD PTR .LC0[rip]
-        add     rdi, 1
-        mov     eax, 1
-        movapd  xmm0, xmm1
+        movsd   .LC0(%rip), %xmm1
+        addq    $1, %rdi
+        movl    $1, %eax
+        movapd  %xmm1, %xmm0
 .L3:
-        mulsd   xmm1, xmm3
-        pxor    xmm2, xmm2
-        cvtsi2sd        xmm2, rax
-        add     rax, 1
-        divsd   xmm1, xmm2
-        addsd   xmm0, xmm1
-        cmp     rax, rdi
+        mulsd   %xmm3, %xmm1
+        pxor    %xmm2, %xmm2
+        cvtsi2sdq       %rax, %xmm2
+        addq    $1, %rax
+        divsd   %xmm2, %xmm1
+        addsd   %xmm1, %xmm0
+        cmpq    %rdi, %rax
         jne     .L3
         ret
 .L4:
-        movsd   xmm0, QWORD PTR .LC0[rip]
+        movsd   .LC0(%rip), %xmm0
         ret
-.LC1:
-        .string "my_exp = "
 main:
-        push    rbp
-        mov     edx, 9
-        mov     esi, OFFSET FLAT:.LC1
-        mov     edi, OFFSET FLAT:std::cout
-        push    rbx
-        sub     rsp, 8
-        call    std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)
-        mov     eax, 1
-        mov     edx, 4000000001
-        movsd   xmm1, QWORD PTR .LC0[rip]
-        movapd  xmm0, xmm1
+        pushq   %rbp
+        movl    $1, %eax
+        movl    $4000000001, %edx
+        pushq   %rbx
+        subq    $8, %rsp
+        movsd   .LC0(%rip), %xmm1
+        movapd  %xmm1, %xmm0
 .L8:
-        pxor    xmm2, xmm2
-        cvtsi2sd        xmm2, rax
-        add     rax, 1
-        divsd   xmm0, xmm2
-        addsd   xmm1, xmm0
-        cmp     rax, rdx
+        pxor    %xmm2, %xmm2
+        cvtsi2sdq       %rax, %xmm2
+        addq    $1, %rax
+        divsd   %xmm2, %xmm0
+        addsd   %xmm0, %xmm1
+        cmpq    %rdx, %rax
         jne     .L8
-        movapd  xmm0, xmm1
-        mov     edi, OFFSET FLAT:std::cout
+        movapd  %xmm1, %xmm0
+        movl    $_ZSt4cout, %edi
         call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<double>(double)
-        mov     rbx, rax
-        mov     rax, QWORD PTR [rax]
-        mov     rax, QWORD PTR [rax-24]
-        mov     rbp, QWORD PTR [rbx+240+rax]
-        test    rbp, rbp
+        movq    %rax, %rbx
+        movq    (%rax), %rax
+        movq    -24(%rax), %rax
+        movq    240(%rbx,%rax), %rbp
+        testq   %rbp, %rbp
         je      .L13
-        cmp     BYTE PTR [rbp+56], 0
+        cmpb    $0, 56(%rbp)
         je      .L10
-        movsx   esi, BYTE PTR [rbp+67]
+        movsbl  67(%rbp), %esi
 .L11:
-        mov     rdi, rbx
+        movq    %rbx, %rdi
         call    std::basic_ostream<char, std::char_traits<char> >::put(char)
-        mov     rdi, rax
+        movq    %rax, %rdi
         call    std::basic_ostream<char, std::char_traits<char> >::flush()
-        add     rsp, 8
-        xor     eax, eax
-        pop     rbx
-        pop     rbp
+        addq    $8, %rsp
+        xorl    %eax, %eax
+        popq    %rbx
+        popq    %rbp
         ret
 .L10:
-        mov     rdi, rbp
+        movq    %rbp, %rdi
         call    std::ctype<char>::_M_widen_init() const
-        mov     rax, QWORD PTR [rbp+0]
-        mov     esi, 10
-        mov     rdi, rbp
-        call    [QWORD PTR [rax+48]]
-        movsx   esi, al
+        movq    0(%rbp), %rax
+        movl    $10, %esi
+        movq    %rbp, %rdi
+        call    *48(%rax)
+        movsbl  %al, %esi
         jmp     .L11
 main.cold:
 .LC0:
