@@ -1,62 +1,54 @@
 my_exp(double, long):
-        push    rbp
-        mov     rbp, rsp
-        movsd   QWORD PTR [rbp-40], xmm0
-        mov     QWORD PTR [rbp-48], rdi
-        movsd   xmm0, QWORD PTR .LC0[rip]
-        movsd   QWORD PTR [rbp-8], xmm0
-        movsd   xmm0, QWORD PTR .LC0[rip]
-        movsd   QWORD PTR [rbp-16], xmm0
-        mov     QWORD PTR [rbp-24], 1
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movsd   %xmm0, -40(%rbp)
+        movq    %rdi, -48(%rbp)
+        movsd   .LC0(%rip), %xmm0
+        movsd   %xmm0, -8(%rbp)
+        movsd   .LC0(%rip), %xmm0
+        movsd   %xmm0, -16(%rbp)
+        movq    $1, -24(%rbp)
         jmp     .L2
 .L3:
-        movsd   xmm0, QWORD PTR [rbp-16]
-        mulsd   xmm0, QWORD PTR [rbp-40]
-        pxor    xmm1, xmm1
-        cvtsi2sd        xmm1, QWORD PTR [rbp-24]
-        divsd   xmm0, xmm1
-        movsd   QWORD PTR [rbp-16], xmm0
-        movsd   xmm0, QWORD PTR [rbp-8]
-        addsd   xmm0, QWORD PTR [rbp-16]
-        movsd   QWORD PTR [rbp-8], xmm0
-        add     QWORD PTR [rbp-24], 1
+        movsd   -16(%rbp), %xmm0
+        mulsd   -40(%rbp), %xmm0
+        pxor    %xmm1, %xmm1
+        cvtsi2sdq       -24(%rbp), %xmm1
+        divsd   %xmm1, %xmm0
+        movsd   %xmm0, -16(%rbp)
+        movsd   -8(%rbp), %xmm0
+        addsd   -16(%rbp), %xmm0
+        movsd   %xmm0, -8(%rbp)
+        addq    $1, -24(%rbp)
 .L2:
-        mov     rax, QWORD PTR [rbp-24]
-        cmp     rax, QWORD PTR [rbp-48]
+        movq    -24(%rbp), %rax
+        cmpq    -48(%rbp), %rax
         jle     .L3
-        movsd   xmm0, QWORD PTR [rbp-8]
-        pop     rbp
+        movsd   -8(%rbp), %xmm0
+        popq    %rbp
         ret
-.LC1:
-        .string "my_exp = "
 main:
-        push    rbp
-        mov     rbp, rsp
-        push    rbx
-        sub     rsp, 24
-        mov     eax, 4000000000
-        mov     QWORD PTR [rbp-24], rax
-        mov     QWORD PTR [rbp-32], 1
-        mov     esi, OFFSET FLAT:.LC1
-        mov     edi, OFFSET FLAT:std::cout
-        call    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
-        mov     rbx, rax
-        pxor    xmm1, xmm1
-        cvtsi2sd        xmm1, QWORD PTR [rbp-32]
-        movq    rax, xmm1
-        mov     rdx, QWORD PTR [rbp-24]
-        mov     rdi, rdx
-        movq    xmm0, rax
+        pushq   %rbp
+        movq    %rsp, %rbp
+        subq    $16, %rsp
+        movl    $4000000000, %eax
+        movq    %rax, -8(%rbp)
+        movq    $1, -16(%rbp)
+        pxor    %xmm1, %xmm1
+        cvtsi2sdq       -16(%rbp), %xmm1
+        movq    %xmm1, %rax
+        movq    -8(%rbp), %rdx
+        movq    %rdx, %rdi
+        movq    %rax, %xmm0
         call    my_exp(double, long)
-        movq    rax, xmm0
-        movq    xmm0, rax
-        mov     rdi, rbx
+        movq    %xmm0, %rax
+        movq    %rax, %xmm0
+        movl    $_ZSt4cout, %edi
         call    std::basic_ostream<char, std::char_traits<char> >::operator<<(double)
-        mov     esi, OFFSET FLAT:std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)
-        mov     rdi, rax
+        movl    $_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_, %esi
+        movq    %rax, %rdi
         call    std::basic_ostream<char, std::char_traits<char> >::operator<<(std::basic_ostream<char, std::char_traits<char> >& (*)(std::basic_ostream<char, std::char_traits<char> >&))
-        mov     eax, 0
-        mov     rbx, QWORD PTR [rbp-8]
+        movl    $0, %eax
         leave
         ret
 .LC0:
