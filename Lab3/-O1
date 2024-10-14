@@ -1,41 +1,35 @@
 my_exp(double, long):
-        movapd  xmm3, xmm0
-        test    rdi, rdi
+        movapd  %xmm0, %xmm3
+        testq   %rdi, %rdi
         jle     .L4
-        add     rdi, 1
-        mov     eax, 1
-        movsd   xmm1, QWORD PTR .LC0[rip]
-        movapd  xmm0, xmm1
+        addq    $1, %rdi
+        movl    $1, %eax
+        movsd   .LC0(%rip), %xmm1
+        movapd  %xmm1, %xmm0
 .L3:
-        mulsd   xmm1, xmm3
-        pxor    xmm2, xmm2
-        cvtsi2sd        xmm2, rax
-        divsd   xmm1, xmm2
-        addsd   xmm0, xmm1
-        add     rax, 1
-        cmp     rax, rdi
+        mulsd   %xmm3, %xmm1
+        pxor    %xmm2, %xmm2
+        cvtsi2sdq       %rax, %xmm2
+        divsd   %xmm2, %xmm1
+        addsd   %xmm1, %xmm0
+        addq    $1, %rax
+        cmpq    %rdi, %rax
         jne     .L3
         ret
 .L4:
-        movsd   xmm0, QWORD PTR .LC0[rip]
+        movsd   .LC0(%rip), %xmm0
         ret
-.LC1:
-        .string "my_exp = "
 main:
-        push    rbx
-        mov     esi, OFFSET FLAT:.LC1
-        mov     edi, OFFSET FLAT:std::cout
-        call    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)
-        mov     rbx, rax
-        mov     edi, 4000000000
-        movsd   xmm0, QWORD PTR .LC0[rip]
+        subq    $8, %rsp
+        movl    $4000000000, %edi
+        movsd   .LC0(%rip), %xmm0
         call    my_exp(double, long)
-        mov     rdi, rbx
+        movl    $_ZSt4cout, %edi
         call    std::basic_ostream<char, std::char_traits<char> >& std::basic_ostream<char, std::char_traits<char> >::_M_insert<double>(double)
-        mov     rdi, rax
+        movq    %rax, %rdi
         call    std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)
-        mov     eax, 0
-        pop     rbx
+        movl    $0, %eax
+        addq    $8, %rsp
         ret
 .LC0:
         .long   0
