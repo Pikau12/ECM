@@ -109,10 +109,10 @@ void multiplyMatrix(double* result, double* A, double* B, int n) {
         for (int k = 0; k < n; k++) {
             double temp = A[i * n + k];
             for (int j = 0; j < n; j += 4) {
-                __m256d result_vec = _mm256_loadu_pd(&result[i * n + j]); // Изменено на __m256d и _mm256_loadu_pd
-                __m256d B_vec = _mm256_loadu_pd(&B[k * n + j]);          // Изменено на __m256d и _mm256_loadu_pd
-                result_vec = _mm256_add_pd(result_vec, _mm256_mul_pd(_mm256_set1_pd(temp), B_vec)); // Явное сложение и умножение
-                _mm256_storeu_pd(&result[i * n + j], result_vec); // Изменено на _mm256_storeu_pd
+                __m256d result_vec = _mm256_loadu_pd(&result[i * n + j]); 
+                __m256d B_vec = _mm256_loadu_pd(&B[k * n + j]);         
+                result_vec = _mm256_add_pd(result_vec, _mm256_mul_pd(_mm256_set1_pd(temp), B_vec)); 
+                _mm256_storeu_pd(&result[i * n + j], result_vec); 
             }
         }
     }
