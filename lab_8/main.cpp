@@ -10,7 +10,7 @@
 
 const int K = 10;
 const int N_MIN = 256;                 //1Kb
-const int N_MAX = 2 * 1024 * 1024;    //8Mb
+const int N_MAX = 4 * 1024 * 1024;    //16Mb
 const int COUNT = 100;
 
 void forward(std::vector<int>& arr) {
